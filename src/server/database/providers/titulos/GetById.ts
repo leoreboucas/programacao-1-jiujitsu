@@ -1,30 +1,30 @@
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
-import { ILivro } from '../../models';
+import { ITitulo } from '../../models';
 
-export const getById = async (id: number): Promise<ILivro | Error> => {
+export const getById = async (id: number): Promise<ITitulo | Error> => {
   try {
-    const filePath = path.resolve(__dirname, '../../../../../00_livros.json');
+    const filePath = path.resolve(__dirname, '../../../../../18_titulos.json');
 
     if (!existsSync(filePath)) {
       return new Error('Registro não encontrado');
     }
 
     const fileData = readFileSync(filePath, 'utf-8');
-    let livros: ILivro[] = [];
+    let titulos: ITitulo[] = [];
 
     if (fileData.trim() !== '') {
-      livros = JSON.parse(fileData);
+      titulos = JSON.parse(fileData);
     }
 
-    const result = livros.find((livro: ILivro) => Number(livro.id) === Number(id));
+    const result = titulos.find((titulo: ITitulo) => Number(titulo.id) === Number(id));
 
     if (result) {
       return {
         ...result,
         created_at: new Date(result.created_at),
         updated_at: new Date(result.updated_at)
-      } as ILivro;
+      } as ITitulo;
     }
 
     return new Error('Registro não encontrado');

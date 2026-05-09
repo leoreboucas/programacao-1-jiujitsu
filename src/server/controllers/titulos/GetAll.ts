@@ -2,14 +2,14 @@ import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import * as yup from 'yup';
 
-import { livros } from "../../database/providers";
+import { titulos } from "../../database/providers";
 import { validation } from '../../shared/middleware';
 
 interface IQueryProps {
   id?: number;
   page?: number;
   limit?: number;
-  name?: string;
+  titulo?: string;
 }
 
 export const getAllValidation = validation((getSchema) => ({
@@ -17,14 +17,16 @@ export const getAllValidation = validation((getSchema) => ({
     page: yup.number().optional().moreThan(0),
     limit: yup.number().optional().moreThan(0),
     id: yup.number().integer().optional().default(0),
-    name: yup.string().optional(),
+    titulo: yup.string().optional(),
   })),
 }));
 
 export const getAll = async (req: Request<unknown, unknown, unknown, IQueryProps>, res: Response) => {
-  const result = await livros.Provider.getAll(req.query.page || 1, req.query.limit || 10, req.query.name || '', Number(req.query.id));
-  const count = await livros.Provider.count(req.query.name);
+  const result = await titulos.Provider.getAll(req.query.page || 1, req.query.limit || 10, req.query.titulo || '', Number(req.query.id));
+  const count = await titulos.Provider.count(req.query.titulo);
 
+  console.log(result)
+  console.log(count)
   if (result instanceof Error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       errors: { default: result.message }

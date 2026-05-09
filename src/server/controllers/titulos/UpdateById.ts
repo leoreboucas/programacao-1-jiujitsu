@@ -2,27 +2,31 @@ import { Request, Response } from "express";
 import * as yup from 'yup';
 
 import { validation } from '../../shared/middleware';
-import { ILivro } from "../../database/models";
+import { ITitulo } from "../../database/models";
 import { StatusCodes } from "http-status-codes";
-import { livros } from "../../database/providers";
+import { titulos } from "../../database/providers";
 
 interface IParamsProps {
   id?: number;
 };
 
-interface IBodyProps extends Omit<ILivro, 'id' | 'created_at' | 'updated_at'> {};
+interface IBodyProps extends Omit<ITitulo, 'id' | 'created_at' | 'updated_at'> {};
 
 export const updateByIdValidation = validation((getSchema) => ({
   body: getSchema<IBodyProps>(yup.object().shape({
+    idUsuario: yup.number().required(),
     titulo: yup.string().required().min(3),
-    autor: yup.string().required().min(3).max(750),
+    dataVencimento: yup.date().required(),
+    dataTitulo: yup.date().required(),
+    tipo: yup.string().required().min(3),
+    status: yup.string().required().min(3),
   })),
   params: getSchema<IParamsProps>(yup.object().shape({
     id: yup.number().integer().required().moreThan(0),
   })),
 }));
 
-export const updateById = async (req: Request<IParamsProps, {}, IBodyProps>, res: Response) => {
+export const updateById = async (req: Request<IParamsProps, unknown, IBodyProps>, res: Response) => {
   if (!req.params.id){
     return res.status(StatusCodes.BAD_REQUEST).json({
       errors: {
@@ -31,7 +35,7 @@ export const updateById = async (req: Request<IParamsProps, {}, IBodyProps>, res
     });
   }
 
-  const result = await livros.Provider.updateById(req.params.id, req.body);
+  const result = await titulos.Provider.updateById(req.params.id, req.body);
 
   if (result instanceof Error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

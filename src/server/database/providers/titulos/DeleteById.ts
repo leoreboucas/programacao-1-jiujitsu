@@ -1,27 +1,27 @@
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import path from 'path';
-import { ILivro } from '../../models';
+import { ITitulo } from '../../models';
 
 export const deleteById = async (id: number): Promise<void | Error> => {
   try {
-    const filePath = path.resolve(__dirname, '../../../../../00_livros.json');
+    const filePath = path.resolve(__dirname, '../../../../../18_titulos.json');
 
     if (!existsSync(filePath)) {
       return new Error('Erro ao apagar o registro');
     }
 
     const fileData = readFileSync(filePath, 'utf-8');
-    let livros: ILivro[] = [];
+    let titulos: ITitulo[] = [];
 
     if (fileData.trim() !== '') {
-      livros = JSON.parse(fileData);
+      titulos = JSON.parse(fileData);
     }
 
-    const index = livros.findIndex((livro: ILivro) => Number(livro.id) === Number(id));
+    const index = titulos.findIndex((titulo: ITitulo) => Number(titulo.id) === Number(id));
 
     if (index !== -1) {
-      livros.splice(index, 1);
-      writeFileSync(filePath, JSON.stringify(livros, null, 2), 'utf-8');
+      titulos.splice(index, 1);
+      writeFileSync(filePath, JSON.stringify(titulos, null, 2), 'utf-8');
 
       return;
     }

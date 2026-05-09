@@ -1,10 +1,10 @@
 import { Router } from "express";
-import livrosRoutes from './livros.routes';
-import favoritosRoutes from "./favoritos.routes";
+import titulosRouters from './titulos.routes';
+import usuariosRoutes from "./usuarios.routes";
 
 const router = Router();
 
-router.use('/livros', livrosRoutes);
-router.use('/favoritos', favoritosRoutes);
+router.use('/titulos', titulosRouters);
+router.use('/usuarios', usuariosRoutes);
 
 export { router };
