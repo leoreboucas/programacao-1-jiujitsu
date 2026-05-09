@@ -1,30 +1,30 @@
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
-import { IFavorito } from '../../models';
+import { IUsuario } from '../../models';
 
-export const getById = async (id: number): Promise<IFavorito | Error> => {
+export const getById = async (id: number): Promise<IUsuario | Error> => {
   try {
-    const filePath = path.resolve(__dirname, '../../../../../01_favoritos.json');
+    const filePath = path.resolve(__dirname, '../../../../../01_usuarios.json');
 
     if (!existsSync(filePath)) {
       return new Error('Registro não encontrado');
     }
 
     const fileData = readFileSync(filePath, 'utf-8');
-    let favoritos: IFavorito[] = [];
+    let usuarios: IUsuario[] = [];
 
     if (fileData.trim() !== '') {
-      favoritos = JSON.parse(fileData);
+      usuarios = JSON.parse(fileData);
     }
 
-    const result = favoritos.find((favorito: IFavorito) => Number(favorito.id) === Number(id));
+    const result = usuarios.find((usuario: IUsuario) => Number(usuario.id) === Number(id));
 
     if (result) {
       return {
         ...result,
         created_at: new Date(result.created_at),
         updated_at: new Date(result.updated_at)
-      } as IFavorito;
+      } as IUsuario;
     }
 
     return new Error('Registro não encontrado');

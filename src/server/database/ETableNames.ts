@@ -1,4 +1,6 @@
 export enum ETableNames{
-  livro = 'livro',
-  favorito = 'favorito',
+  usuario = 'usuario',
+  titulo = 'titulo',
+  historicoPagamento = 'historicoPagamento',
+  perfil = 'perfil',
 }

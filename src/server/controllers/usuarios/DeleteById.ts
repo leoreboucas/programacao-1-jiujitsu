@@ -2,20 +2,20 @@ import { Request, Response } from "express";
 import * as yup from 'yup';
 
 import { validation } from '../../shared/middleware';
+import { usuarios } from "../../database/providers";
 import { StatusCodes } from "http-status-codes";
-import { favoritos } from "../../database/providers";
 
 interface IParamsProps {
   id?: number;
 };
 
-export const getByIdValidation = validation((getSchema) => ({
+export const deleteByIdValidation = validation((getSchema) => ({
   params: getSchema<IParamsProps>(yup.object().shape({
     id: yup.number().integer().required().moreThan(0),
   })),
 }));
 
-export const getById = async (req: Request<IParamsProps>, res: Response) => {
+export const deleteById = async (req: Request<IParamsProps>, res: Response) => {
   if (!req.params.id){
     return res.status(StatusCodes.BAD_REQUEST).json({
       errors: {
@@ -24,7 +24,8 @@ export const getById = async (req: Request<IParamsProps>, res: Response) => {
     });
   }
 
-  const result = await favoritos.Provider.getById(req.params.id);
+  const result = await usuarios.Provider.deleteById(req.params.id);
+
   if (result instanceof Error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       errors: {
@@ -33,5 +34,5 @@ export const getById = async (req: Request<IParamsProps>, res: Response) => {
     });
   }
 
-  return res.status(StatusCodes.OK).json(result);
-}
+  return res.status(StatusCodes.NO_CONTENT).send();
+};

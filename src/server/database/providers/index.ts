@@ -1,2 +1,2 @@
 export * as livros from './livros';
-export * as favoritos from './favoritos';
+export * as usuarios from './usuarios';

@@ -2,14 +2,14 @@ import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import * as yup from 'yup';
 
-import { favoritos } from "../../database/providers";
+import { usuarios } from "../../database/providers";
 import { validation } from '../../shared/middleware';
 
 interface IQueryProps {
   id?: number;
   page?: number;
   limit?: number;
-  name?: string;
+  email?: string;
 }
 
 export const getAllValidation = validation((getSchema) => ({
@@ -17,13 +17,13 @@ export const getAllValidation = validation((getSchema) => ({
     page: yup.number().optional().moreThan(0),
     limit: yup.number().optional().moreThan(0),
     id: yup.number().integer().optional().default(0),
-    name: yup.string().optional(),
+    email: yup.string().optional(),
   })),
 }));
 
 export const getAll = async (req: Request<unknown, unknown, unknown, IQueryProps>, res: Response) => {
-  const result = await favoritos.Provider.getAll(req.query.page || 1, req.query.limit || 10, req.query.name || '', Number(req.query.id));
-  const count = await favoritos.Provider.count(req.query.name);
+  const result = await usuarios.Provider.getAll(req.query.page || 1, req.query.limit || 10, req.query.email || '', Number(req.query.id));
+  const count = await usuarios.Provider.count(req.query.email);
 
   if (result instanceof Error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
