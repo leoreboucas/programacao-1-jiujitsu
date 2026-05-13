@@ -3,7 +3,7 @@
 export interface IHistoricoPagamento {
   id: number;
   idTitulo: number;
-  dataPagamento: string;
+  dataPagamento: Date;
   metodoPagamento: string;
   created_at: Date;
   updated_at: Date;
