@@ -11,4 +11,10 @@ export enum ETableNames{
   plano = 'plano',
   termo = 'termo',
   usuarioTermo = 'usuario_termo',
+  filial = 'filial',
+  turma = 'turma',
+  usuarioTurma = 'usuario_turma',
+  instrutorTurma = 'instrutor_turma',
+  horario = 'horario',
+  turmaHorario = 'turma_horario',
 }
