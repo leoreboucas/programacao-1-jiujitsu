@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "nome": "Iniciante",
+    "faixa_etaria": "18-30",
+    "faixa_peso": "50-70kg",
+    "faixa": "Branca",
+    "descricao": "Categoria para alunos iniciantes sem experiência prévia",
+    "created_at": "2026-05-09T10:00:00.000Z",
+    "updated_at": "2026-05-09T10:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "nome": "Intermediário",
+    "faixa_etaria": "20-40",
+    "faixa_peso": "70-90kg",
+    "faixa": "Azul",
+    "descricao": "Categoria para alunos com experiência moderada",
+    "created_at": "2026-05-09T10:00:00.000Z",
+    "updated_at": "2026-05-09T10:00:00.000Z"
+  }
+]

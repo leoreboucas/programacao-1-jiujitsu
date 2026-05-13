@@ -1,3 +1,11 @@
 export * as titulos from './titulos';
 export * as usuarios from './usuarios';
 export * as historicoPagamento from './historicoPagamento';
+export * as livros from './livros';
+export * as favoritos from './favoritos';
+export * as categorias from './categoria';
+export * as contratos from './contrato';
+export * as historicoCategorias from './historicoCategoria';
+export * as planos from './plano';
+export * as termos from './termo';
+export * as usuarioTermos from './usuarioTermo';
