@@ -16,3 +16,8 @@ export * from './Horario';
 export * from './UsuarioTurma';
 export * from './InstrutorTurma';
 export * from './TurmaHorario';
+export * from './Pessoa';
+export * from './Telefone';
+export * from './Observacao';
+export * from './FichaMedica';
+export * from './Graduacao';

@@ -15,3 +15,8 @@ export * as horarios from './horarios';
 export * as usuariosTurmas from './usuariosTurmas';
 export * as instrutoresTurmas from './instrutoresTurmas';
 export * as turmasHorarios from './turmasHorarios';
+export * as fichasMedicas from './FichaMedica';
+export * as graduacoes from './Graduacao';
+export * as observacoes from './Observacao';
+export * as pessoas from './Pessoa';
+export * as telefones from './Telefone';

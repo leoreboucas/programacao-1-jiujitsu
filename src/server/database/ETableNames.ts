@@ -17,4 +17,9 @@ export enum ETableNames{
   instrutorTurma = 'instrutor_turma',
   horario = 'horario',
   turmaHorario = 'turma_horario',
+  pessoa = 'pessoa',
+  telefone = 'telefone',
+  observacao = 'observacao',
+  fichaMedica= 'ficha_medica',
+  graducao= 'graducao',
 }
