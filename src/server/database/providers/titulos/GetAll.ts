@@ -23,7 +23,7 @@ export const getAll = async (page: number, limit: number, titulo: string, id = 0
 
     const filteredResult = titulos.filter((item: ITitulo) => {
       const matchId = Number(item.id) === searchId;
-      const matchTitulo = item.titulo.toLowerCase().includes(titulo.toLowerCase());
+      const matchTitulo = titulo ? (item.titulo ?? '').toLowerCase().includes(titulo.toLowerCase()): false;
 
       return matchId || matchTitulo;
     });

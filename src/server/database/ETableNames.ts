@@ -3,8 +3,6 @@ export enum ETableNames{
   titulo = 'titulo',
   historicoPagamento = 'historicoPagamento',
   perfil = 'perfil',
-  livro = 'livro',
-  favorito = 'favorito',
   categoria = 'categoria',
   contrato = 'contrato',
   historicoCategoria = 'historico_categoria',
