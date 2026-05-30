@@ -7,23 +7,27 @@ import { validation } from '../../shared/middleware';
 
 interface IQueryProps {
   id?: number;
-  page?: number;
-  limit?: number;
-  name?: string;
+  titulo?: string;
 }
 
 export const getAllValidation = validation((getSchema) => ({
   query: getSchema<IQueryProps>(yup.object().shape({
-    page: yup.number().optional().moreThan(0),
-    limit: yup.number().optional().moreThan(0),
     id: yup.number().integer().optional().default(0),
-    name: yup.string().optional(),
+    titulo: yup.string().optional().default(""),
   })),
 }));
 
 export const getAll = async (req: Request<unknown, unknown, unknown, IQueryProps>, res: Response) => {
-  const result = await planos.Provider.getAll(req.query.page || 1, req.query.limit || 10, req.query.name || '', Number(req.query.id));
-  const count = await planos.Provider.count(req.query.name);
+
+  const id = Number(req.query.id) || 0;
+const titulo = req.query.titulo || '';
+  console.log(
+    {id, titulo}
+  )
+  const [result, count] = await Promise.all([
+     planos.Provider.getAll(id, titulo),
+     planos.Provider.count(id)
+  ])
 
   if (result instanceof Error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -39,4 +43,4 @@ export const getAll = async (req: Request<unknown, unknown, unknown, IQueryProps
   res.setHeader('x-total-count', count);
 
   return res.status(StatusCodes.OK).json(result);
-};
+}

@@ -1,20 +1,17 @@
-import { readFileSync } from 'fs';
-import path from 'path';
-import { IFilial } from '../../models';
+import { ETableNames } from '../../ETableNames';
+import { Knex } from '../../knex';
 
-export const count = async (id = ''): Promise<number | Error> => {
+export const count = async (nome = ''): Promise<number | Error> => {
   try {
-    const filePath = path.resolve(__dirname, '../../../../../07_turma.json');
+    const query = Knex(ETableNames.turma);
 
-    const fileData = await readFileSync(filePath, 'utf-8');
+    if (nome) query.where('nome', 'like', `%${nome}%`);
 
-    const turmas = JSON.parse(fileData);
+    const [{ count }] = await query.count<[{ count: number }]>('* as count');
 
-    const registrosFiltrados = turmas.filter((turma: IFilial) =>
-      turma.id.toString().includes(id.toString())
-    );
+    if (Number.isInteger(Number(count))) return Number(count);
 
-    return registrosFiltrados.length;
+    return new Error('Erro ao consultar a quantidade total de registros');
   } catch (error) {
     console.log(error);
     return new Error('Erro ao consultar a quantidade total de registros');

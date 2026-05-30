@@ -1,22 +1,20 @@
-import { readFileSync } from 'fs';
-import path from 'path';
-import { ITelefone } from '../../models';
+import { Knex } from '../../knex';
+import { ETableNames } from '../../ETableNames';
+ 
+export const count = async (id = -1): Promise<number | Error> => {
+    try {
+       
+        const [{ count }] = await Knex(ETableNames.telefone)
+      .where('id','like', `%${id}%`)
+      .count<[{ count: number }]>('* as count');
 
-export const count = async (id = ''): Promise<number | Error> => {
-  try {
-    const filePath = path.resolve(__dirname, '../../../../../00_telefones.json');
+    if(Number.isInteger(Number(count))) return Number(count);
 
-    const fileData = await readFileSync(filePath, 'utf-8');
-
-    const telefones = JSON.parse(fileData);
-
-    const registrosFiltrados = telefones.filter((telefone: ITelefone) =>
-      telefone.id.toString().includes(id)
-    );
-
-    return registrosFiltrados.length;
-  } catch (error) {
-    console.log(error);
     return new Error('Erro ao consultar a quantidade total de registros');
-  }
+        
+    } catch (error) {
+        console.log(error);
+        return new Error('Erro ao contabilizar os registros');
+    }
 };
+ 

@@ -41,7 +41,7 @@ export const getAll = async (
     queryId
   );
 
-  const count = await horarios.Provider.count(String(queryId || ''));
+  const count = await horarios.Provider.count(req.query.dia || '', req.query.hora || '');
 
   if (result instanceof Error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

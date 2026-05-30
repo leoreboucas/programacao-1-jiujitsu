@@ -1,52 +1,35 @@
-import { readFileSync, existsSync } from 'fs';
-import path from 'path';
+import { Knex } from '../../knex';
 import { IPlano } from '../../models';
+import { ETableNames } from '../../ETableNames';
+ 
+export const getAll = async (id = 0, titulo = ''): Promise<IPlano[] | Error> => {
+    try {
+    const query = Knex<IPlano>(ETableNames.plano).select('*');
 
-export const getAll = async (page: number, limit: number, titulo: string, id = 0): Promise<IPlano[] | Error> => {
-  try {
-    const filePath = path.resolve(__dirname, '../../../../../12_plano.json');
-
-    if (!existsSync(filePath)) {
-      return [];
+    if (id > 0) {
+      query.where('id', id);
+    } else if (titulo) {
+      query.where('titulo', 'like', `%${titulo}%`);
     }
 
-    const fileData = readFileSync(filePath, 'utf-8');
-    let planos: IPlano[] = [];
-
-    if (fileData.trim() !== '') {
-      planos = JSON.parse(fileData);
+    const result = await query;
+    console.log({result})
+    
+    if (id > 0 && !result.some(item => item.id === id)) {
+      const resultById = await Knex<IPlano>(ETableNames.plano)
+        .select('*')
+        .where('id', id)
+        .first();
+    
+      if (resultById) return [...result, resultById];
     }
+    
+    return result;
 
-    const searchId = Number(id);
-    const searchLimit = Number(limit);
-    const searchPage = Number(page);
-
-    const filteredResult = planos.filter((item: IPlano) => {
-      const matchId = Number(item.id) === searchId;
-      const matchTitulo = item.titulo.toLowerCase().includes(titulo.toLowerCase());
-
-      return matchId || matchTitulo;
-    });
-
-    const startIndex = (searchPage - 1) * searchLimit;
-    const endIndex = startIndex + searchLimit;
-
-    let paginatedResult = filteredResult.slice(startIndex, endIndex);
-
-    if (searchId > 0 && paginatedResult.every((item: IPlano) => Number(item.id) !== searchId)) {
-      const resultById = planos.find((item: IPlano) => Number(item.id) === searchId);
-      if (resultById) {
-        paginatedResult = [...paginatedResult, resultById];
-      }
+        
+    } catch (error) {
+        console.log(error);
+        return new Error('Erro ao buscar os registros');
     }
-
-    return paginatedResult.map((item: IPlano) => ({
-      ...item,
-      created_at: new Date(item.created_at),
-      updated_at: new Date(item.updated_at),
-    })) as IPlano[];
-  } catch (error) {
-    console.log(error);
-    return new Error('Erro ao consultar os registros');
-  }
 };
+ 

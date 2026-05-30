@@ -1,53 +1,35 @@
-import { readFileSync, existsSync } from 'fs';
-import path from 'path';
+import { Knex } from '../../knex';
 import { ITelefone } from '../../models';
+import { ETableNames } from '../../ETableNames';
+ 
+export const getAll = async (id = 0, numero = ''): Promise<ITelefone[] | Error> => {
+    try {
+    const query = Knex<ITelefone>(ETableNames.telefone).select('*');
 
-export const getAll = async (page: number, limit: number, id = 0): Promise<ITelefone[] | Error> => {
-  try {
-    const filePath = path.resolve(__dirname, '../../../../../00_telefones.json');
-
-    if (!existsSync(filePath)) {
-      return [];
+    if (id > 0) {
+      query.where('id', id);
+    } else if (numero) {
+      query.where('numero', 'like', `%${numero}%`);
     }
 
-    const fileData = readFileSync(filePath, 'utf-8');
-    let telefones: ITelefone[] = [];
-
-    if (fileData.trim() !== '') {
-      telefones = JSON.parse(fileData);
+    const result = await query;
+    console.log({result})
+    
+    if (id > 0 && !result.some(item => item.id === id)) {
+      const resultById = await Knex<ITelefone>(ETableNames.telefone)
+        .select('*')
+        .where('id', id)
+        .first();
+    
+      if (resultById) return [...result, resultById];
     }
+    
+    return result;
 
-    const searchId = Number(id);
-    const searchLimit = Number(limit);
-    const searchPage = Number(page);
-
-    const filteredResult = id ? telefones.filter((item: ITelefone) => {
-      const matchId = Number(item.id) === searchId;
-
-      return matchId;
-    }) : telefones;
-
-    const startIndex = (searchPage - 1) * searchLimit;
-    const endIndex = startIndex + searchLimit;
-
-    let paginatedResult = filteredResult.slice(startIndex, endIndex);
-
-    if (searchId > 0 && paginatedResult.every((item: ITelefone) => Number(item.id) !== searchId)) {
-      const resultById = telefones.find((item: ITelefone) => Number(item.id) === searchId);
-
-      if (resultById) {
-        paginatedResult = [...paginatedResult, resultById];
-      }
+        
+    } catch (error) {
+        console.log(error);
+        return new Error('Erro ao buscar os registros');
     }
-
-    return paginatedResult.map((item: ITelefone) => ({
-      ...item,
-      createdAt: new Date(item.createdAt),
-      updatedAt: new Date(item.updatedAt)
-    })) as ITelefone[];
-
-  } catch (error) {
-    console.log(error);
-    return new Error('Erro ao consultar os registros');
-  }
 };
+ 
