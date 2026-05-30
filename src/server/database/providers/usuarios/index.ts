@@ -1,16 +1,14 @@
-import * as deleteById from './DeleteById';
-import * as updateById from './UpdateById';
-import * as getById from './GetById';
-import * as create from './Create';
-import * as getAll from './GetAll';
-import * as count from './Count';
+import * as GetByEmail from './GetByEmail';
+import * as GetById from './GetById';
+import * as Create from './Create';
+import * as UpdateById from './UpdateById';
+import * as DeleteById from './DeleteById';
 
 
 export const Provider = {
-  ...deleteById,
-  ...updateById,
-  ...getById,
-  ...create,
-  ...getAll,
-  ...count,
+  ...GetByEmail,
+  ...GetById,
+  ...Create,
+  ...UpdateById,
+  ...DeleteById,
 };

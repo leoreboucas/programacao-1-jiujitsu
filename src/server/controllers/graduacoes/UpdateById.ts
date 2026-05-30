@@ -14,11 +14,10 @@ interface IBodyProps extends Omit<IGraduacao, 'id' | 'createdAt' | 'updatedAt'> 
 
 export const updateByIdValidation = validation((getSchema) => ({
   body: getSchema<IBodyProps>(yup.object().shape({
-    nome: yup.string().required(),
-    sobrenome: yup.string().required(),
-    peso: yup.number().required(),
-    dataNascimento: yup.date().required(),
-    dataMatricula: yup.date().required(),
+    id_aluno: yup.number().integer().required().moreThan(0),
+    tipo: yup.string().required(),
+    faixa_atual: yup.string().required(),
+    grau_atual: yup.string().required(),
   })),
   params: getSchema<IParamsProps>(yup.object().shape({
     id: yup.number().integer().required().moreThan(0),

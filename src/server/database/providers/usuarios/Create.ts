@@ -1,39 +1,21 @@
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import path from 'path';
+import { ETableNames } from '../../ETableNames';
 import { IUsuario } from '../../models';
-
-export const create = async (favorito: Omit<IUsuario, 'id' | 'created_at' | 'updated_at'>): Promise<number | Error> => {
-    try {
-      const filePath = path.resolve(__dirname, '../../../../../01_usuarios.json');
-      let usuarios: IUsuario[] = [];
-
-      if (existsSync(filePath)) {
-        const fileData = readFileSync(filePath, 'utf-8');
-        if (fileData.trim() !== '') {
-          usuarios = JSON.parse(fileData);
-        }
-      }
-
-      const novoId = usuarios.length > 0
-        ? Math.max(...usuarios.map((f) => Number(f.id) || 0)) + 1
-        : 1;
+import { Knex } from '../../knex';
 
 
-      const dataAtual = new Date();
-      const novoRegistro: IUsuario = {
-        ...favorito,
-        id: novoId,
-        created_at: dataAtual,
-        updated_at: dataAtual,
-      } as IUsuario;
+export const create = async (usuario: Omit<IUsuario, 'id' | 'created_at' | 'updated_at'>): Promise<number | Error> => {
+  try {
+    const [result] = await Knex(ETableNames.pessoa).insert(usuario).returning('id');
 
-      usuarios.push(novoRegistro);
-
-      await writeFileSync(filePath, JSON.stringify(usuarios, null, 2), 'utf-8');
-
-      return novoId;
-    } catch (error) {
-      console.log(error);
-      return new Error('Erro ao cadastrar o registro');
+    if (typeof result === 'object') {
+      return result.id;
+    } else if (typeof result === 'number') {
+      return result;
     }
+
+    return new Error('Erro ao cadastrar o registro');
+  } catch (error) {
+    console.log(error);
+    return new Error('Erro ao cadastrar o registro');
+  }
 };

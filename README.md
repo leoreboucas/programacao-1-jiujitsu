@@ -9,6 +9,12 @@ npm
 yarn install
 ```
 
+### Create and populate the database
+```bash
+yarn knex:migrate
+yarn knex:seed
+```
+
 ### Start the app in development mode
 ```bash
 yarn start

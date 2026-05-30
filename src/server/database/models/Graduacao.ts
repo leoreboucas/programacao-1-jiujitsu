@@ -1,12 +1,9 @@
-
-
 export interface IGraduacao {
   id: number;
-  nome: string;
-  sobrenome: string;
-  peso: number;
-  dataNascimento: Date;
-  dataMatricula: Date;
+  id_aluno: number;
+  tipo: string;
+  faixa_atual: string;
+  grau_atual: string;
   createdAt: Date;
   updatedAt: Date;
 };

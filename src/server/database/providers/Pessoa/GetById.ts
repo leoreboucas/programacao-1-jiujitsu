@@ -1,31 +1,16 @@
-import { readFileSync, existsSync } from 'fs';
-import path from 'path';
+import { ETableNames } from '../../ETableNames';
 import { IPessoa } from '../../models';
+import { Knex } from '../../knex';
+
 
 export const getById = async (id: number): Promise<IPessoa | Error> => {
   try {
-    const filePath = path.resolve(__dirname, '../../../../../01_pessoa.json');
+    const result = await Knex(ETableNames.pessoa)
+      .select('*')
+      .where('id', '=', id)
+      .first();
 
-    if (!existsSync(filePath)) {
-      return new Error('Registro não encontrado');
-    }
-
-    const fileData = readFileSync(filePath, 'utf-8');
-    let pessoas: IPessoa[] = [];
-
-    if (fileData.trim() !== '') {
-      pessoas = JSON.parse(fileData);
-    }
-
-    const result = pessoas.find((pessoa: IPessoa) => Number(pessoa.id) === Number(id));
-
-    if (result) {
-      return {
-        ...result,
-        createdAt: new Date(result.createdAt),
-        updatedAt: new Date(result.updatedAt)
-      } as IPessoa;
-    }
+    if (result) return result;
 
     return new Error('Registro não encontrado');
   } catch (error) {

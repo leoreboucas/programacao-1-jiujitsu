@@ -2,8 +2,6 @@ export * from './Perfil';
 export * from './HistoricoPagamento';
 export * from './Titulo';
 export * from './Usuario';
-export * from './Livro';
-export * from './Favorito';
 export * from './Categoria';
 export * from './Contrato';
 export * from './HistoricoCategoria';

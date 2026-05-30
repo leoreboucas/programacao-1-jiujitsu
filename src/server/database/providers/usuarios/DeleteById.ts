@@ -1,30 +1,14 @@
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import path from 'path';
-import { IUsuario } from '../../models';
+import { ETableNames } from '../../ETableNames';
+import { Knex } from '../../knex';
+
 
 export const deleteById = async (id: number): Promise<void | Error> => {
   try {
-    const filePath = path.resolve(__dirname, '../../../../../01_usuarios.json');
+    const result = await Knex(ETableNames.usuario)
+      .where('id', '=', id)
+      .del();
 
-    if (!existsSync(filePath)) {
-      return new Error('Erro ao apagar o registro');
-    }
-
-    const fileData = readFileSync(filePath, 'utf-8');
-    let usuarios: IUsuario[] = [];
-
-    if (fileData.trim() !== '') {
-      usuarios = JSON.parse(fileData);
-    }
-
-    const index = usuarios.findIndex((usuario: IUsuario) => Number(usuario.id) === Number(id));
-
-    if (index !== -1) {
-      usuarios.splice(index, 1);
-      writeFileSync(filePath, JSON.stringify(usuarios, null, 2), 'utf-8');
-
-      return;
-    }
+    if (result > 0) return;
 
     return new Error('Erro ao apagar o registro');
   } catch (error) {

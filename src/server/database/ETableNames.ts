@@ -19,5 +19,5 @@ export enum ETableNames{
   telefone = 'telefone',
   observacao = 'observacao',
   fichaMedica= 'ficha_medica',
-  graducao= 'graducao',
+  graduacao= 'graduacao',
 }

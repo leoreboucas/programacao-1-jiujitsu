@@ -1,20 +1,17 @@
-import { readFileSync } from 'fs';
-import path from 'path';
-import { IPessoa } from '../../models';
- 
-export const count = async (id = ''): Promise<number | Error> => {
+import { ETableNames } from '../../ETableNames';
+import { Knex } from '../../knex';
+
+
+export const count = async (nome = '', sobrenome = ''): Promise<number | Error> => {
   try {
-    const filePath = path.resolve(__dirname, '../../../../../01_pessoa.json');
- 
-    const fileData = await readFileSync(filePath, 'utf-8');
- 
-    const pessoas = JSON.parse(fileData);
- 
-    const registrosFiltrados = pessoas.filter((pessoa: IPessoa) =>
-      pessoa.id.toString().includes(id)
-    );
- 
-    return registrosFiltrados.length;
+    const [{ count }] = await Knex(ETableNames.pessoa)
+      .where('nome', 'like', `%${nome}%`)
+      .orWhere('sobrenome', 'like', `%${sobrenome}%`)
+      .count<[{ count: number }]>('* as count');
+
+    if (Number.isInteger(Number(count))) return Number(count);
+
+    return new Error('Erro ao consultar a quantidade total de registros');
   } catch (error) {
     console.log(error);
     return new Error('Erro ao consultar a quantidade total de registros');
