@@ -1,20 +1,15 @@
-import { readFileSync } from 'fs';
-import path from 'path';
-import { IGraduacao } from '../../models';
+import { ETableNames } from '../../ETableNames';
+import { Knex } from '../../knex';
 
-export const count = async (id = ''): Promise<number | Error> => {
+export const count = async (id = -1): Promise<number | Error> => {
   try {
-    const filePath = path.resolve(__dirname, '../../../../../03_graduacao.json');
-
-    const fileData = await readFileSync(filePath, 'utf-8');
-
-    const graduacoes = JSON.parse(fileData);
-
-    const registrosFiltrados = graduacoes.filter((graduacao: IGraduacao) =>
-      graduacao.id.toString().includes(id)
-    );
-
-    return registrosFiltrados.length;
+    const [{ count }] = await Knex(ETableNames.graduacao)
+          .where('id', 'like', `%${id}%`)
+          .count<[{ count: number }]>('* as count');
+    
+        if (Number.isInteger(Number(count))) return Number(count);
+    
+        return new Error('Erro ao consultar a quantidade total de registros');
   } catch (error) {
     console.log(error);
     return new Error('Erro ao consultar a quantidade total de registros');

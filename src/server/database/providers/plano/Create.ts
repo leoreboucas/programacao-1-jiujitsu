@@ -1,38 +1,23 @@
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import path from 'path';
+
+import { Knex } from '../../knex';
 import { IPlano } from '../../models';
+import { ETableNames } from '../../ETableNames';
 
-export const create = async (plano: Omit<IPlano, 'id' | 'created_at' | 'updated_at'>): Promise<number | Error> => {
-  try {
-    const filePath = path.resolve(__dirname, '../../../../../12_plano.json');
-    let planos: IPlano[] = [];
+export const create = async (plano: Omit<IPlano, 'id' | 'createdAt' | 'updatedAt'>): Promise<number | Error> => {
+    try {
+    const [result] = await Knex(ETableNames.plano).insert(plano).returning('id');
+  
+      console.log({result})
 
-    if (existsSync(filePath)) {
-      const fileData = readFileSync(filePath, 'utf-8');
-      if (fileData.trim() !== '') {
-        planos = JSON.parse(fileData);
+      if (typeof result === 'object') {
+        return result.id;
+      } else if (typeof result === 'number') {
+        return result;
       }
+  
+      return new Error('Erro ao cadastrar o registro');
+    } catch (error) {
+      console.log(error);
+      return new Error('Erro ao cadastrar o registro');
     }
-
-    const novoId = planos.length > 0
-      ? Math.max(...planos.map((p) => Number(p.id) || 0)) + 1
-      : 1;
-
-    const dataAtual = new Date();
-    const novoRegistro: IPlano = {
-      ...plano,
-      id: novoId,
-      created_at: dataAtual,
-      updated_at: dataAtual,
-    } as IPlano;
-
-    planos.push(novoRegistro);
-
-    writeFileSync(filePath, JSON.stringify(planos, null, 2), 'utf-8');
-
-    return novoId;
-  } catch (error) {
-    console.log(error);
-    return new Error('Erro ao cadastrar o registro');
-  }
 };

@@ -7,23 +7,27 @@ import { validation } from '../../shared/middleware';
 
 interface IQueryProps {
   id?: number;
-  page?: number;
-  limit?: number;
-  name?: string;
+  numero?: string;
 }
 
 export const getAllValidation = validation((getSchema) => ({
   query: getSchema<IQueryProps>(yup.object().shape({
-    page: yup.number().optional().moreThan(0),
-    limit: yup.number().optional().moreThan(0),
     id: yup.number().integer().optional().default(0),
-    name: yup.string().optional(),
+    numero: yup.string().optional().default(""),
   })),
 }));
 
 export const getAll = async (req: Request<unknown, unknown, unknown, IQueryProps>, res: Response) => {
-  const result = await telefones.Provider.getAll(req.query.page || 1, req.query.limit || 10, Number(req.query.id));
-  const count = await telefones.Provider.count(req.query.name);
+
+  const id = Number(req.query.id) || 0;
+const numero = req.query.numero || '';
+  console.log(
+    {id, numero}
+  )
+  const [result, count] = await Promise.all([
+     telefones.Provider.getAll(id, numero),
+     telefones.Provider.count(id)
+  ])
 
   if (result instanceof Error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

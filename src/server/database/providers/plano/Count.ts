@@ -1,21 +1,20 @@
-import { readFileSync } from 'fs';
-import path from 'path';
-import { IPlano } from '../../models';
+import { Knex } from '../../knex';
+import { ETableNames } from '../../ETableNames';
+ 
+export const count = async (id = -1): Promise<number | Error> => {
+    try {
+       
+        const [{ count }] = await Knex(ETableNames.plano)
+      .where('id','like', `%${id}%`)
+      .count<[{ count: number }]>('* as count');
 
-export const count = async (titulo = ''): Promise<number | Error> => {
-  try {
-    const filePath = path.resolve(__dirname, '../../../../../12_plano.json');
+    if(Number.isInteger(Number(count))) return Number(count);
 
-    const fileData = readFileSync(filePath, 'utf-8');
-    const planos: IPlano[] = JSON.parse(fileData);
-
-    const registrosFiltrados = planos.filter((plano: IPlano) =>
-      plano.titulo.toLowerCase().includes(titulo.toLowerCase())
-    );
-
-    return registrosFiltrados.length;
-  } catch (error) {
-    console.log(error);
     return new Error('Erro ao consultar a quantidade total de registros');
-  }
+        
+    } catch (error) {
+        console.log(error);
+        return new Error('Erro ao contabilizar os registros');
+    }
 };
+ 

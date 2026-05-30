@@ -17,12 +17,14 @@ export const getByIdValidation = validation((getSchema) => ({
 
 export const getById = async (req: Request<IParamsProps>, res: Response) => {
   if (!req.params.id) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      errors: { default: 'O parâmetro "id" precisa ser informado!' }
-    });
-  }
-
-  const result = await planos.Provider.getById(req.params.id);
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        errors: {
+          default: 'O parâmetro "id" precisa ser informado!'
+        }
+      });
+    }
+  
+    const result = await planos.Provider.getById(req.params.id);
 
   if (result instanceof Error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
