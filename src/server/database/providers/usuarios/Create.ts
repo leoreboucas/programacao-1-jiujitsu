@@ -5,7 +5,7 @@ import { Knex } from '../../knex';
 
 export const create = async (usuario: Omit<IUsuario, 'id' | 'created_at' | 'updated_at'>): Promise<number | Error> => {
   try {
-    const [result] = await Knex(ETableNames.pessoa).insert(usuario).returning('id');
+    const [result] = await Knex(ETableNames.usuario).insert(usuario).returning('id');
 
     if (typeof result === 'object') {
       return result.id;

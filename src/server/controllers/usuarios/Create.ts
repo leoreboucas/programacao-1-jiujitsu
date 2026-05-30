@@ -29,5 +29,5 @@ export const create = async (req: Request<unknown, unknown, IUsuario>, res: Resp
   }
 
 
-  return res.status(StatusCodes.CREATED).json({id_livro:result});
+  return res.status(StatusCodes.CREATED).json({id:result});
 }
