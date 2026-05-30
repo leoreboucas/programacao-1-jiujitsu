@@ -38,7 +38,7 @@ router.use('/horarios', horariosRoutes);
 router.use('/usuarios-turmas', usuariosTurmasRoutes);
 router.use('/instrutores-turmas', instrutoresTurmasRoutes);
 router.use('/turmas-horarios', turmasHorariosRoutes);
-router.use('/fichasMedicas', fichasMedicas);
+router.use('/fichas-medicas', fichasMedicas);
 router.use('/graduacoes', graduacoes);
 router.use('/observacoes', observacoes);
 router.use('/telefones', telefones);

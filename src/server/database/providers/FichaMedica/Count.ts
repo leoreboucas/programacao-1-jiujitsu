@@ -1,20 +1,16 @@
-import { readFileSync } from 'fs';
-import path from 'path';
-import { IFichaMedica } from '../../models';
+import { ETableNames } from '../../ETableNames';
+import { Knex } from '../../knex';
 
-export const count = async (id = ''): Promise<number | Error> => {
+
+export const count = async (id_pessoa = 0): Promise<number | Error> => {
   try {
-    const filePath = path.resolve(__dirname, '../../../../../04_fichaMedica.json');
+    const [{ count }] = await Knex(ETableNames.fichaMedica)
+      .where('id_pessoa', '=', id_pessoa)
+      .count<[{ count: number }]>('* as count');
 
-    const fileData = await readFileSync(filePath, 'utf-8');
+    if (Number.isInteger(Number(count))) return Number(count);
 
-    const fichasMedicas = JSON.parse(fileData);
-
-    const registrosFiltrados = fichasMedicas.filter((fichaMedica: IFichaMedica) =>
-      fichaMedica.id.toString().includes(id)
-    );
-
-    return registrosFiltrados.length;
+    return new Error('Erro ao consultar a quantidade total de registros');
   } catch (error) {
     console.log(error);
     return new Error('Erro ao consultar a quantidade total de registros');

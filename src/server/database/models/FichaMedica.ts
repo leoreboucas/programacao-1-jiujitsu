@@ -2,10 +2,10 @@
 
 export interface IFichaMedica {
   id: number;
-  idPessoa: number;
-  dataAtualFicha: Date;
-  prescricaoMedica: string;
+  id_pessoa: number;
+  data_atual_ficha: Date;
+  prescricao_medica: string;
   outros: string;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: Date;
+  updated_at: Date;
 };

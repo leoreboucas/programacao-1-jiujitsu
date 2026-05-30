@@ -9,7 +9,10 @@ interface IQueryProps {
   id?: number;
   page?: number;
   limit?: number;
-  name?: string;
+  idPessoa?: number;
+  dataAtualFicha?: Date;
+  prescricaoMedica?: string;
+  outros?: string;
 }
 
 export const getAllValidation = validation((getSchema) => ({
@@ -17,13 +20,18 @@ export const getAllValidation = validation((getSchema) => ({
     page: yup.number().optional().moreThan(0),
     limit: yup.number().optional().moreThan(0),
     id: yup.number().integer().optional().default(0),
-    name: yup.string().optional(),
+    idPessoa: yup.number().integer().optional().default(0),
+    dataAtualFicha: yup.date().optional(),
+    prescricaoMedica: yup.string().optional(),
+    outros: yup.string().optional(),
   })),
 }));
 
 export const getAll = async (req: Request<unknown, unknown, unknown, IQueryProps>, res: Response) => {
-  const result = await fichasMedicas.Provider.getAll(req.query.page || 1, req.query.limit || 10, req.query.name || '', Number(req.query.id));
-  const count = await fichasMedicas.Provider.count(req.query.name);
+  const result = await fichasMedicas.Provider.getAll(
+    req.query.page || 1, req.query.limit || 10, req.query.idPessoa || 0, req.query.dataAtualFicha || null,
+    req.query.prescricaoMedica || '', req.query.outros || '', Number(req.query.id));
+  const count = await fichasMedicas.Provider.count(Number(req.query.idPessoa));
 
   if (result instanceof Error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

@@ -1,35 +1,15 @@
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import path from 'path';
+import { ETableNames } from '../../ETableNames';
 import { IFichaMedica } from '../../models';
+import { Knex } from '../../knex';
 
-export const updateById = async (id: number, fichaMedica: Omit<IFichaMedica, 'id' | 'createdAt' | 'updatedAt'>): Promise<void | Error> => {
+
+export const updateById = async (id: number, fichaMedica: Omit<IFichaMedica, 'id' | 'created_at' | 'updated_at'>): Promise<void | Error> => {
   try {
-    const filePath = path.resolve(__dirname, '../../../../../04_fichaMedica.json');
+    const result = await Knex(ETableNames.fichaMedica)
+      .update(fichaMedica)
+      .where('id', '=', id);
 
-    if (!existsSync(filePath)) {
-      return new Error('Erro ao atualizar o registro');
-    }
-
-    const fileData = readFileSync(filePath, 'utf-8');
-    let fichasMedicas: IFichaMedica[] = [];
-
-    if (fileData.trim() !== '') {
-      fichasMedicas = JSON.parse(fileData);
-    }
-
-    const index = fichasMedicas.findIndex((item: IFichaMedica) => Number(item.id) === Number(id));
-
-    if (index !== -1) {
-      fichasMedicas[index] = {
-        ...fichasMedicas[index],
-        ...fichaMedica,
-        updatedAt: new Date()
-      };
-
-      writeFileSync(filePath, JSON.stringify(fichasMedicas, null, 2), 'utf-8');
-
-      return;
-    }
+    if (result > 0) return;
 
     return new Error('Erro ao atualizar o registro');
   } catch (error) {

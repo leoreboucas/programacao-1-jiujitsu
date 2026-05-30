@@ -10,13 +10,13 @@ interface IParamsProps {
   id?: number;
 };
 
-interface IBodyProps extends Omit<IFichaMedica, 'id' | 'createdAt' | 'updatedAt'> {};
+interface IBodyProps extends Omit<IFichaMedica, 'id' | 'created_at' | 'updated_at'> {};
 
 export const updateByIdValidation = validation((getSchema) => ({
   body: getSchema<IBodyProps>(yup.object().shape({
-    idPessoa: yup.number().required(),
-    dataAtualFicha: yup.date().required(),
-    prescricaoMedica: yup.string().required(),
+    id_pessoa: yup.number().required(),
+    data_atual_ficha: yup.date().required(),
+    prescricao_medica: yup.string().required(),
     outros: yup.string().required(),
   })),
   params: getSchema<IParamsProps>(yup.object().shape({

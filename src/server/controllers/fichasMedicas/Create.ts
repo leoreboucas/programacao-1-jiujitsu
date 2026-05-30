@@ -6,13 +6,13 @@ import { StatusCodes } from "http-status-codes";
 import { IFichaMedica } from "../../database/models";
 import { fichasMedicas } from "../../database/providers";
 
-interface IBodyProps extends Omit<IFichaMedica, 'id' | 'createdAt' | 'updatedAt'> {};
+interface IBodyProps extends Omit<IFichaMedica, 'id' | 'created_at' | 'updated_at'> {};
 
 export const createValidation = validation((getSchema) => ({
   body: getSchema<IBodyProps>(yup.object().shape({
-    idPessoa: yup.number().required(),
-    dataAtualFicha: yup.date().required(),
-    prescricaoMedica: yup.string().required(),
+    id_pessoa: yup.number().required(),
+    data_atual_ficha: yup.date().required(),
+    prescricao_medica: yup.string().required(),
     outros: yup.string().required(),
   })),
 }));
