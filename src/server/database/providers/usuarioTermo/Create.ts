@@ -1,36 +1,19 @@
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import path from 'path';
+import { ETableNames } from '../../ETableNames';
 import { IUsuarioTermo } from '../../models';
+import { Knex } from '../../knex';
+
 
 export const create = async (usuarioTermo: Omit<IUsuarioTermo, 'id' | 'created_at' | 'updated_at'>): Promise<number | Error> => {
   try {
-    const filePath = path.resolve(__dirname, '../../../../../17_usuario_termo.json');
-    let usuarioTermos: IUsuarioTermo[] = [];
+    const [result] = await Knex(ETableNames.usuarioTermo).insert(usuarioTermo).returning('id');
 
-    if (existsSync(filePath)) {
-      const fileData = readFileSync(filePath, 'utf-8');
-      if (fileData.trim() !== '') {
-        usuarioTermos = JSON.parse(fileData);
-      }
+    if (typeof result === 'object') {
+      return result.id;
+    } else if (typeof result === 'number') {
+      return result;
     }
 
-    const novoId = usuarioTermos.length > 0
-      ? Math.max(...usuarioTermos.map((u) => Number(u.id) || 0)) + 1
-      : 1;
-
-    const dataAtual = new Date();
-    const novoRegistro: IUsuarioTermo = {
-      ...usuarioTermo,
-      id: novoId,
-      created_at: dataAtual,
-      updated_at: dataAtual,
-    } as IUsuarioTermo;
-
-    usuarioTermos.push(novoRegistro);
-
-    writeFileSync(filePath, JSON.stringify(usuarioTermos, null, 2), 'utf-8');
-
-    return novoId;
+    return new Error('Erro ao cadastrar o registro');
   } catch (error) {
     console.log(error);
     return new Error('Erro ao cadastrar o registro');

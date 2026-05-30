@@ -1,51 +1,41 @@
-import { readFileSync, existsSync } from 'fs';
-import path from 'path';
+import { ETableNames } from '../../ETableNames';
 import { IUsuarioTermo } from '../../models';
+import { Knex } from '../../knex';
 
-export const getAll = async (page: number, limit: number, id_usuario = 0, id = 0): Promise<IUsuarioTermo[] | Error> => {
+
+export const getAll = async (
+  page: number, limit: number, id_usuario: Number, data_assinatura: Date | undefined, id = 0
+):Promise<IUsuarioTermo[] | Error> => {
   try {
-    const filePath = path.resolve(__dirname, '../../../../../17_usuario_termo.json');
+    const query = Knex(ETableNames.usuarioTermo)
+      .select('*');
 
-    if (!existsSync(filePath)) {
-      return [];
+    if (id > 0) {
+      query.where('id', id);
     }
 
-    const fileData = readFileSync(filePath, 'utf-8');
-    let usuarioTermos: IUsuarioTermo[] = [];
-
-    if (fileData.trim() !== '') {
-      usuarioTermos = JSON.parse(fileData);
+    if (id_usuario) {
+      query.where('id_usuario', id_usuario);
     }
 
-    const searchId = Number(id);
-    const searchIdUsuario = Number(id_usuario);
-    const searchLimit = Number(limit);
-    const searchPage = Number(page);
-
-    const filteredResult = usuarioTermos.filter((item: IUsuarioTermo) => {
-      const matchId = Number(item.id) === searchId;
-      const matchIdUsuario = searchIdUsuario > 0 ? Number(item.id_usuario) === searchIdUsuario : true;
-
-      return matchId || matchIdUsuario;
-    });
-
-    const startIndex = (searchPage - 1) * searchLimit;
-    const endIndex = startIndex + searchLimit;
-
-    let paginatedResult = filteredResult.slice(startIndex, endIndex);
-
-    if (searchId > 0 && paginatedResult.every((item: IUsuarioTermo) => Number(item.id) !== searchId)) {
-      const resultById = usuarioTermos.find((item: IUsuarioTermo) => Number(item.id) === searchId);
-      if (resultById) {
-        paginatedResult = [...paginatedResult, resultById];
-      }
+    if (data_assinatura) {
+      query.where('data_assinatura', data_assinatura);
     }
 
-    return paginatedResult.map((item: IUsuarioTermo) => ({
-      ...item,
-      created_at: new Date(item.created_at),
-      updated_at: new Date(item.updated_at),
-    })) as IUsuarioTermo[];
+    const result = await query
+      .offset((page - 1) * limit)
+      .limit(limit);
+
+    if (id > 0 && result.every(item => item.id !== id)) {
+      const resultById = await Knex(ETableNames.usuarioTermo)
+        .select('*')
+        .where('id', '=', id)
+        .first();
+
+      if (resultById) return [...result, resultById];
+    }
+
+    return result;
   } catch (error) {
     console.log(error);
     return new Error('Erro ao consultar os registros');

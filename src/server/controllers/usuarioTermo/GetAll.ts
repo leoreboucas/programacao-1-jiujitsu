@@ -10,6 +10,7 @@ interface IQueryProps {
   page?: number;
   limit?: number;
   id_usuario?: number;
+  data_assinatura?: Date;
 }
 
 export const getAllValidation = validation((getSchema) => ({
@@ -18,11 +19,13 @@ export const getAllValidation = validation((getSchema) => ({
     limit: yup.number().optional().moreThan(0),
     id: yup.number().integer().optional().default(0),
     id_usuario: yup.number().integer().optional().default(0),
+    data_assinatura: yup.date().optional(),
   })),
 }));
 
 export const getAll = async (req: Request<unknown, unknown, unknown, IQueryProps>, res: Response) => {
-  const result = await usuarioTermos.Provider.getAll(req.query.page || 1, req.query.limit || 10, Number(req.query.id_usuario), Number(req.query.id));
+  const result = await usuarioTermos.Provider.getAll(
+    req.query.page || 1, req.query.limit || 10, Number(req.query.id_usuario), req.query.data_assinatura || undefined, Number(req.query.id));
   const count = await usuarioTermos.Provider.count(Number(req.query.id_usuario));
 
   if (result instanceof Error) {
